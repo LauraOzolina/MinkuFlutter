@@ -1,10 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Permission.camera.request();
+  await Permission.microphone.request();
+  runApp(const MyApp());
+}
 
-void main() {
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: WebViewPage(),
+    );
+  }
+}
+
+class WebViewPage extends StatefulWidget {
+  @override
+  State<WebViewPage> createState() => _WebViewPageState();
+}
+
+class _WebViewPageState extends State<WebViewPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Minku")),
+      body: InAppWebView(
+        initialUrlRequest: URLRequest(
+          url: WebUri("https://viavrarlab.github.io/MinkuFinal/"),
+        ),
+        initialSettings: InAppWebViewSettings(
+          mediaPlaybackRequiresUserGesture: false,
+          allowsInlineMediaPlayback: true,
+        ),
+        onPermissionRequest: (controller, request) async {
+          return PermissionResponse(
+            resources: request.resources,
+            action: PermissionResponseAction.GRANT,
+          );
+        },
+      ),
+    );
+  }
+}
+
+/*void main() {
   runApp(const MyApp());
 }
 
@@ -67,5 +111,5 @@ class _WebViewDemoState extends State<WebViewDemo> {
       Permission.camera,
     ].request();
   }
-}
+}*/
 
